@@ -1,27 +1,24 @@
-<!DOCTYPE html>
-<html lang="ko-KR">
-<head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Document</title>
-</head>
-<body>
-	<table>
-	<thead>
+<html layout:decorate="~{layout}">
+<article layout:fragment="content" class="container my-3">
+	<table class="table">
+	<thead class="table-dark">
 		<tr>
+			<th>번호</th>
 			<th>제목</th>
 			<th>작성일시</th>
 		</tr>
 	</thead>
 	<tbody>
-		<tr th:each="question : ${questionList}">
+		<tr th:each="question, loop : ${questionList}">
+			<td th:text="${loop.count}"></td>
 			<td>
 				<a th:href="@{|/detail/${question.id}|}"
 					th:text="${question.subject}"></a>
 			</td>
-			<td th:text="${question.createTime}"></td>
+			<td th:text="${#temporals.format(question.createTime, 'yyyy-MM-dd HH:mm:ss')}"></td>
 		</tr>
 	</tbody>
 	</table>
-</body>
+	<a th:href="@{/question}" class="btn btn-primary">질문 등록하기</a>
+</article>
 </html>
