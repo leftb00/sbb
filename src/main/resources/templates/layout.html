@@ -8,6 +8,8 @@
 	<title>ssb</title>
 </head>
 <body>
-<th:block layout:fragment="content"></ht:block>
+<nav th:replace="~{navbar :: navbarFragment}"></nav>
+<th:block layout:fragment="content"></th:block>
+<script th:src="@{/js/bootstrap.min.js}"></script>
 </body>
 </html>

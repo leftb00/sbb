@@ -34,17 +34,6 @@ public class SbbController {
 		return "list";
 	}
 
-	@GetMapping("/detail/{id}")
-	public String detail(Model model,
-			@PathVariable("id") Integer id,
-			AnswerForm answerForm) {
-
-		Question question = this.questionService.getQuestion(id);
-		model.addAttribute("question", question);
-
-		return "detail";
-	}
-
 	@GetMapping("/question")
 	public String questionForm(QuestionForm questionForm) {
 
@@ -66,7 +55,18 @@ public class SbbController {
 		return "redirect:/list";
 	}
 
-	@PostMapping("/answer/{id}")
+	@GetMapping("/detail/{id}")
+	public String detail(Model model,
+			@PathVariable("id") Integer id,
+			AnswerForm answerForm) {
+
+		Question question = this.questionService.getQuestion(id);
+		model.addAttribute("question", question);
+
+		return "detail";
+	}
+
+	@PostMapping("/detail/{id}")
 	public String answer(Model model,
 			@PathVariable("id") Integer id,
 			@Valid AnswerForm answerForm,
