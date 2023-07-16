@@ -13,7 +13,15 @@
 			id="navbarSupportedContent">
 			<ul class="navbar-nav me-auto mb-2 mb-lg-0">
 				<li class="nav-item">
-					<a class="nav-link" href="#">로그인</a>
+					<a class="nav-link"
+						sec:authorize="isAnonymous()"
+						th:href="@{/login}">로그인</a>
+                    <a class="nav-link"
+						sec:authorize="isAuthenticated()"
+						h:href="@{/logout}">로그아웃</a>
+				</li>
+				<li class="nav-item" sec:authorize="isAnonymous()">
+					<a class="nav-link" th:href="@{/signup}">회원가입</a>
 				</li>
 			</ul>
 		</div>

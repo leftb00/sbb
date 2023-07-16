@@ -26,6 +26,11 @@ public class Answer {
 	@CreatedDate
 	private LocalDateTime createTime;
 
+	private LocalDateTime modifyTime;
+
 	@ManyToOne
 	private Question question;
+
+	@ManyToOne
+	private SbbUser author;
 }
