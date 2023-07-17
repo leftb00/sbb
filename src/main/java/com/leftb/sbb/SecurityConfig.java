@@ -23,24 +23,22 @@ public class SecurityConfig {
 	SecurityFilterChain filterChain(HttpSecurity http)
 		throws Exception {
 
-		http.authorizeHttpRequests().requestMatchers(
-			new AntPathRequestMatcher("/**"))
-			.permitAll()
-		// .and().csrf()
-		// 	.ignoringRequestMatchers("/h2-console/**")
-		.and().headers()
-			.addHeaderWriter(new XFrameOptionsHeaderWriter(
-				XFrameOptionsHeaderWriter.XFrameOptionsMode.SAMEORIGIN
-			))
-		.and().formLogin()
-			.loginPage("/login")
-			.defaultSuccessUrl("/")
-		.and().logout()
-			.logoutRequestMatcher(
-				new AntPathRequestMatcher("/logout"))
-			.logoutSuccessUrl("/")
-			.invalidateHttpSession(true)
-		;
+		http.authorizeHttpRequests(requests -> requests
+				.requestMatchers(new AntPathRequestMatcher("/**"))
+				.permitAll()
+			).headers(headers -> headers
+				.addHeaderWriter(new XFrameOptionsHeaderWriter(
+					XFrameOptionsHeaderWriter.XFrameOptionsMode.SAMEORIGIN
+				))
+			).formLogin(login -> login
+				.loginPage("/login")
+				.defaultSuccessUrl("/")
+			).logout(logout -> logout
+				.logoutRequestMatcher(
+					new AntPathRequestMatcher("/logout"))
+				.logoutSuccessUrl("/")
+				.invalidateHttpSession(true)
+			);
 		return http.build();
 	}
 
