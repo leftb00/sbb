@@ -28,7 +28,7 @@ public class AnswerService {
 		return answer.get();
 	}
 
-	public void create(Question question, String content,
+	public Answer create(Question question, String content,
 			SbbUser author) {
 
 		Answer answer = new Answer();
@@ -37,6 +37,8 @@ public class AnswerService {
 		answer.setAuthor(author);
 		answer.setCreateTime(LocalDateTime.now());
 		this.answerRepository.save(answer);
+
+		return answer;
 	}
 
 	public void modify(Answer answer, String content) {
@@ -49,5 +51,11 @@ public class AnswerService {
 	public void delete(Answer answer) {
 
 		this.answerRepository.delete(answer);
+	}
+
+	public void vote(Answer answer, SbbUser sbbUser) {
+
+		answer.getVoter().add(sbbUser);
+		this.answerRepository.save(answer);
 	}
 }

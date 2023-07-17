@@ -86,17 +86,20 @@ public class SbbController {
 
 	@GetMapping({"/", "/list"})
 	public String list(Model model,
-		@RequestParam(value="page", defaultValue="0") int page) {
+		@RequestParam(value="page", defaultValue="0") int page,
+		@RequestParam(value="kw", defaultValue="") String kw) {
 
-        Page<Question> paging = this.questionService.getList(page);
+        Page<Question> paging = this.questionService.getList(page, kw);
         model.addAttribute("paging", paging);
+        model.addAttribute("kw", kw);
 
 		return "list";
 	}
 
 	@PreAuthorize("isAuthenticated")
 	@GetMapping("/question")
-	public String questionForm(QuestionForm questionForm) {
+	public String questionForm(Principal principal,
+			QuestionForm questionForm) {
 
 		return "question";
 	}
@@ -145,10 +148,11 @@ public class SbbController {
 			model.addAttribute("question", question);
 			return "detail";
 		}
-		this.answerService.create(question,
-			answerForm.getContent(), sbbUser);
+		Answer answer = this.answerService.create(question,
+							answerForm.getContent(), sbbUser);
 
-		return String.format("redirect:/detail/%d", id);
+		return String.format("redirect:/detail/%s#answer_%s",
+					id, answer.getId());
 	}
 
 	@PreAuthorize("isAuthenticated")
@@ -189,7 +193,7 @@ public class SbbController {
 				questionForm.getSubject(),
 				questionForm.getContent());
 
-		return String.format("redirect:/detail/%d", id);
+		return String.format("redirect:/detail/%s", id);
 	}
 
 	@PreAuthorize("isAuthenticated()")
@@ -206,6 +210,18 @@ public class SbbController {
 		this.questionService.delete(question);
 
 		return "redirect:/";
+	}
+
+	@PreAuthorize("isAuthenticated()")
+	@GetMapping("/vote/{id}")
+	public String questionVote(Principal principal,
+			@PathVariable("id") Integer id) {
+
+		Question question = this.questionService.getQuestion(id);
+		SbbUser sbbUser = this.userService.getUser(principal.getName());
+		this.questionService.vote(question, sbbUser);
+
+		return String.format("redirect:/detail/%s", id);
 	}
 
 	@PreAuthorize("isAuthenticated()")
@@ -243,7 +259,8 @@ public class SbbController {
 		}
 		this.answerService.modify(answer, answerForm.getContent());
 
-		return String.format("redirect:/detail/%d", answer.getQuestion().getId());
+		return String.format("redirect:/detail/%s#answer_%s",
+					answer.getQuestion().getId(), answer.getId());
 	}
 
 	@PreAuthorize("isAuthenticated()")
@@ -259,6 +276,19 @@ public class SbbController {
         }
         this.answerService.delete(answer);
 
-		return String.format("redirect:/detail/%d", answer.getQuestion().getId());
+		return String.format("redirect:/detail/%s", answer.getQuestion().getId());
     }
+
+	@PreAuthorize("isAuthenticated()")
+	@GetMapping("/answer/vote/{id}")
+	public String answerVote(Principal principal,
+			@PathVariable("id") Integer id) {
+
+		Answer answer = this.answerService.getAnswer(id);
+		SbbUser sbbUser = this.userService.getUser(principal.getName());
+		this.answerService.vote(answer, sbbUser);
+
+		return String.format("redirect:/detail/%s#answer_%s",
+					answer.getQuestion().getId(), answer.getId());
+	}
 }
